@@ -74,3 +74,54 @@ tm_shape(tex_border) +
 ```
 
 ###Convert the data to spatial points patterns (combination of point data and the bounding window)
+
+```{r}
+
+#Convert back from simple features back to data frame
+
+spill_sp<- as(oil_sf, "Spatial")
+
+#but this still isn't something that R recognizes that R can use for spatial points patterns.  Will makes something called ppp ("point pattern analysis")
+
+spill_ppp <- as(spill_sp, "ppp")
+
+#specify bounding, which will be Texas boundary
+
+tx_sp <- as(tex_border, "Spatial")
+
+#makes tex_border a spatial dataframe
+
+tx_owin <- as(tx_sp, "owin")
+
+#makes tx_sp and "owin" file
+
+all_ppp <- ppp(spill_ppp$x, spill_ppp$y, window = tx_owin)
+```
+
+###A density plot indicating the locations of the most densely distributed points:
+
+```{r}
+
+plot(density(all_ppp, sigma = 0.4))
+
+#0.4 is the radius of the bubbles around oil spills
+```
+
+###Quadrat test
+```{r}
+oil_qt <- quadrat.test(all_ppp, nx = 5, ny = 5)
+
+#Takes state of texas and divides it into a grid 5 quads high and 5 quads wide; then tests using chi-square to test null hypothesis that  the distribution of points is random (Complete spatial randomness)
+
+oil_qt
+
+#The output demonstrates that the data are *not* CSR
+
+plot(all_ppp)
+
+plot(oil_qt, add = TRUE, cex = 0.4) #cex changes font size
+
+#The resulting grid with points shows the number of points (upper right) that would be expected in each quadrant in the case of CSR and whether the actual number is.  Upper left shows the number of actual counts.  In the center/bottom is a standardized measure of how much lower/higher the actual number is relative to the expected number
+
+```
+
