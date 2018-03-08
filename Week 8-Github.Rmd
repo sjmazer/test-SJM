@@ -53,4 +53,24 @@ df_loc <- oil_spills %>%
     addMarkers()
 ```
 
+## tmap plot with the Texas state shapefile
 
+```{r}
+
+states <- st_read(dsn = ".", layer = "states")
+
+tex_border <- states %>%
+  filter(STATE_NAME == "Texas") %>%
+  st_transform(4326)
+
+#Now, the coordinate reference system matches that of texas border points
+
+plot(tex_border)
+
+tm_shape(tex_border) +
+  tm_polygons() +
+  tm_shape(oil_sf) +
+  tm_dots(size = 0.3)
+```
+
+###Convert the data to spatial points patterns (combination of point data and the bounding window)
