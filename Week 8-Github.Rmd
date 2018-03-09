@@ -123,5 +123,15 @@ plot(oil_qt, add = TRUE, cex = 0.4) #cex changes font size
 
 #The resulting grid with points shows the number of points (upper right) that would be expected in each quadrant in the case of CSR and whether the actual number is.  Upper left shows the number of actual counts.  In the center/bottom is a standardized measure of how much lower/higher the actual number is relative to the expected number
 
+lag<-seq(0, 1, b = 0.01)
+
+oil_gfun <- envelope(all_ppp, fun=Gest, r = lag, nsim = 100)
+
+ggplot(oil_gfun, aes(x = r, y = obs)) +
+  geom_line(color = "black") +
+  geom_line(aes(x = r, y = theo), color = "red")
+
+#The plot shows that our data have more nearest-neighbor points that are closer than expected based on completely spatially random data
+
 ```
 
